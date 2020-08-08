@@ -20,9 +20,22 @@ public class MainService {
     public List<String> getMedicineClassList() {
         ResultSet resultSet = mainDao.getMedicineClass();
         Iterator<Result> results = resultSet.iterator();
-        List<String> medicineList = new ArrayList<>();
+        List<String> classList = new ArrayList<>();
         results.forEachRemaining(result -> {
             String object = result.getObject().toString();
+            System.out.println(object);
+            classList.add(object);
+        });
+        return classList;
+    }
+
+    //返回某药品分类下的药品信息
+    public List<Object> getMedicineByClassList(String category){
+        ResultSet resultSet = mainDao.getMedicineByClass(category);
+        Iterator<Result> results = resultSet.iterator();
+        List<Object> medicineList = new ArrayList<>();
+        results.forEachRemaining(result -> {
+            Object object = result.getObject();
             System.out.println(object);
             medicineList.add(object);
         });

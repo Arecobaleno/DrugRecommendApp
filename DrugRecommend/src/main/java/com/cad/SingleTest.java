@@ -8,6 +8,7 @@ import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import java.util.Iterator;
 
 // g.V().hasLabel('药品商品名').hasValue("影响血液及造血系统的药物 (Haematopoietic Agents)")
+// 搜索某一property的值 values("name")
 public class SingleTest {
     public static void main(String[] args){
         HugeClient hugeClient = new HugeClient("http://114.67.200.39:44640","hugegraph");
