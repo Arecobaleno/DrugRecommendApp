@@ -16,6 +16,7 @@ public class MainService {
     @Autowired
     private MainDao mainDao;
 
+    // 以List<String>形式返回“药品分类”，用于展示在药品总览中
     public List<String> getMedicineClassList() {
         ResultSet resultSet = mainDao.getMedicineClass();
         Iterator<Result> results = resultSet.iterator();

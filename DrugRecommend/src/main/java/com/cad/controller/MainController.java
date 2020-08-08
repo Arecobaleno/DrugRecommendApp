@@ -15,6 +15,7 @@ public class MainController {
     @Autowired
     private MainService mainService;
 
+    // 以List<String>形式返回“药品分类”，用于展示在药品总览中
     @RequestMapping("/medicine_class")
     public List<String> medicineClassList(){
         return mainService.getMedicineClassList();
