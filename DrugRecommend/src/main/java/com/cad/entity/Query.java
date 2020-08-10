@@ -1,4 +1,4 @@
-package com.cad.dao;
+package com.cad.entity;
 
 public class Query {
     private String category;

@@ -1,13 +1,12 @@
 package com.cad.controller;
 
-import com.cad.dao.Query;
+import com.cad.entity.Query;
 import com.cad.entity.MedicineClass;
 import com.cad.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /*
 首页模块controller
