@@ -16,6 +16,6 @@ public class MainDao {
     }
 
     public ResultSet getMedicineByClass(String category){
-        return gremlin.gremlin("g.V().hasLabel('药品商品名').hasValue('"+ category +"')").execute();
+        return gremlin.gremlin("g.V().hasLabel('药品商品名').hasValue('"+ category +"').properties('name')").execute();
     }
 }

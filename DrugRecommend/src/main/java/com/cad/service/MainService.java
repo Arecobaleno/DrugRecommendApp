@@ -41,4 +41,28 @@ public class MainService {
         });
         return medicineList;
     }
+
+    // 查询通用接口，包括全局查询(all)、单疾病用药查询(disease)、药品查询(drug)、相互作用查询(interaction)
+    public List<Object> queryResult(String category, String content){
+        if (category.equals("all")){
+            /*
+            全局查询
+             */
+        }
+        else if(category.equals("disease")){
+            /*
+            单疾病用药查询
+             */
+        }
+        else if(category.equals("drug")){
+            /*
+            药品查询
+             */
+        }
+        else if(category.equals("interaction")){
+            /*
+            相互作用查询
+             */
+        }
+    }
 }
