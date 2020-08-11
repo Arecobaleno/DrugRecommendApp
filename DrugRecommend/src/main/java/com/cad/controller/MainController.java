@@ -20,7 +20,7 @@ public class MainController {
 
     // 以List<String>形式返回“药品分类”，用于展示在药品总览中
     @GetMapping("/medicine_class")
-    public List<String> medicineClassList(){
+    public List<Object> medicineClassList(){
         return mainService.getMedicineClassList();
     }
 
@@ -31,11 +31,18 @@ public class MainController {
         return mainService.getMedicineByClassList(category_temp);
     }
 
-    // 查询通用接口，包括全局查询(all)、疾病查询(disease)、药品查询(drug)、相互作用查询(interaction)
+    // 查询通用接口，包括全局查询(all)、疾病查询(disease)、药品查询或相互作用(drug)
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     public List<Object> query(@RequestBody Query query){
         String category = query.getCategory();
         String content = query.getContent();
-        return mainService.queryResult(category, content);
+        return mainService.queryList(category, content);
+    }
+
+    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    public List<Object> detail(@RequestBody Query query){
+        String category = query.getCategory();
+        String name = query.getContent();
+        return mainService.queryDetail(category, name);
     }
 }

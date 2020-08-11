@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 // g.V().hasLabel('药品商品名').hasValue("影响血液及造血系统的药物 (Haematopoietic Agents)")
 // 搜索某一property的值 values("name")
+// 模糊查询g.V().hasLabel("药品商品名").filter(values("name").is(Text.contains("高")))
 public class SingleTest {
     public static void main(String[] args){
         HugeClient hugeClient = new HugeClient("http://114.67.200.39:44640","hugegraph");

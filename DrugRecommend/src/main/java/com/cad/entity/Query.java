@@ -1,5 +1,8 @@
 package com.cad.entity;
 
+/*
+请求搜索列表和请求搜索详情都采用本实体
+ */
 public class Query {
     private String category;
     private String content;
