@@ -32,6 +32,12 @@ public class MainDao {
                 ".is(Text.contains('"+content+"'))).properties('name')").execute();
     }
 
+    // 搜索相互作用，返回药品化学名list
+    public ResultSet searchInteractionList(String content){
+        return gremlin.gremlin("g.V().hasLabel('药品化学名').filter(values('name')" +
+                ".is(Text.contains('"+content+"'))).properties('name')").execute();
+    }
+
     // 返回药品的详情
     public ResultSet searchDrug(String name){
         return gremlin.gremlin("g.V().hasLabel('药品商品名').hasValue('"+ name +"')").execute();
@@ -42,8 +48,13 @@ public class MainDao {
         return gremlin.gremlin("g.V().hasLabel('疾病').hasValue('"+ name +"')").execute();
     }
 
-    // 返回相互作用详情(还需修改
+    // 返回name商品具有相互作用的边
     public ResultSet searchInteraction(String name){
-        return gremlin.gremlin("g.V().hasLabel('药品商品名').hasValue('"+ name +"')").execute();
+        return gremlin.gremlin("g.V().hasLabel('药品化学名').hasValue('"
+                + name +"').inE().filter(label().is(Text.contains('相互作用')))").execute();
+    }
+
+    public ResultSet getNameById(String id){
+        return gremlin.gremlin("g.V().hasId("+ id +").values('name')").execute();
     }
 }
