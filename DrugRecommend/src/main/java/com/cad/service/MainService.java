@@ -68,6 +68,7 @@ public class MainService {
             单疾病用药推荐详情页
              */
             resultSet = mainDao.searchDisease(name);
+            return getObjectAndName(resultSet);
         }
         else if(category.equals("drug")){
             /*
@@ -80,20 +81,24 @@ public class MainService {
             相互作用详情页
              */
             resultSet = mainDao.searchInteraction(name);
-            Iterator<Result> results = resultSet.iterator();
-            List<Object> someList = new ArrayList<>();
-            results.forEachRemaining(result -> {
-                Object object = result.getObject();
-                String tarId = ((Edge)object).sourceId().toString(); // 获取目标节点id
-                Object nameObject = getName(tarId);
-                InteractionResult interactionResult = new InteractionResult();
-                interactionResult.setEdgeResult(object);
-                interactionResult.setTargetName(nameObject);
-                someList.add(interactionResult);
-            });
-            return someList;
+            return getObjectAndName(resultSet);
         }
         return makeListObjects(resultSet);
+    }
+
+    private List<Object> getObjectAndName(ResultSet resultSet) {
+        Iterator<Result> results = resultSet.iterator();
+        List<Object> someList = new ArrayList<>();
+        results.forEachRemaining(result -> {
+            Object object = result.getObject();
+            String tarId = ((Edge)object).sourceId().toString(); // 获取目标节点id
+            Object nameObject = getName(tarId);
+            InteractionResult interactionResult = new InteractionResult();
+            interactionResult.setEdgeResult(object);
+            interactionResult.setTargetName(nameObject);
+            someList.add(interactionResult);
+        });
+        return someList;
     }
 
     //构建List<Object>的返回

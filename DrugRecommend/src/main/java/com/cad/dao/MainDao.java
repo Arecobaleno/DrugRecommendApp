@@ -28,7 +28,7 @@ public class MainDao {
 
     // 搜索疾病，返回疾病list
     public ResultSet searchDiseaseList(String content){
-        return gremlin.gremlin("g.V().hasLabel('疾病').filter(values('name')" +
+        return gremlin.gremlin("g.V().hasLabel('疾病','疾病类型').filter(values('name')" +
                 ".is(Text.contains('"+content+"'))).properties('name')").execute();
     }
 
@@ -45,13 +45,14 @@ public class MainDao {
 
     // 返回疾病详情(还需修改，需要添加用药推荐的功能
     public ResultSet searchDisease(String name){
-        return gremlin.gremlin("g.V().hasLabel('疾病').hasValue('"+ name +"')").execute();
+        return gremlin.gremlin("g.V().hasLabel('疾病','疾病类型').hasValue('"
+                + name +"').bothE().filter(label().is(Text.contains('适应证')))").execute();
     }
 
     // 返回name商品具有相互作用的边
     public ResultSet searchInteraction(String name){
         return gremlin.gremlin("g.V().hasLabel('药品化学名').hasValue('"
-                + name +"').inE().filter(label().is(Text.contains('相互作用')))").execute();
+                + name +"').bothE().filter(label().is(Text.contains('相互作用')))").execute();
     }
 
     public ResultSet getNameById(String id){
