@@ -39,6 +39,7 @@ public class MainController {
         return mainService.queryList(category, content);
     }
 
+    // 返回疾病、药品、相互作用的详情
     @RequestMapping(value = "/detail", method = RequestMethod.POST)
     public List<Object> detail(@RequestBody Query query){
         String category = query.getCategory();
