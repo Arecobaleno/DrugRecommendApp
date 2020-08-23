@@ -12,7 +12,7 @@ public class MainDao {
 
     // 搜索所有的“药品分类”名称
     public ResultSet getMedicineClass(){
-        return gremlin.gremlin("g.V().hasLabel('药品分类').values().properties('name')").execute();
+        return gremlin.gremlin("g.V().hasLabel('药品分类').properties('name')").execute();
     }
 
     // 根据药品类名返回药品

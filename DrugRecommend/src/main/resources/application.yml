@@ -1,2 +1,8 @@
 server:
   port: 10088
+spring:
+  data:
+    mongodb:
+      host: 114.67.200.39
+      port: 27817
+      database: Hypertension

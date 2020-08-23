@@ -7,8 +7,18 @@ import com.baidu.hugegraph.structure.graph.Edge;
 import com.baidu.hugegraph.structure.gremlin.Result;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import com.cad.service.MainService;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,16 +29,16 @@ import java.util.List;
 // 含相互作用的关系 g.V().hasLabel('药品商品名').hasValue('开富林 Kai Fu Lin').inE().filter(label().is(Text.contains("相互作用")))
 public class SingleTest {
     public static void main(String[] args){
-        HugeClient hugeClient = new HugeClient("http://114.67.200.39:44640","hugegraph");
-        GremlinManager gremlin = hugeClient.gremlin();
+        //MongoClient mongoClient = MongoClients.create("mongodb://114.67.200.39:27817");
+//        MongoClient mongoClient = MongoClients.create(
+//                MongoClientSettings.builder()
+//                        .applyToClusterSettings(builder ->
+//                                builder.hosts(Arrays.asList(new ServerAddress("114.67.200.39", 27817))))
+//                        .build());
+//        MongoDatabase database = mongoClient.getDatabase("Hypertension");
+//        MongoCollection<Document> collection = database.getCollection("Paper");
+//        System.out.println(collection.countDocuments());
 
-        ResultSet resultSet = gremlin.gremlin("g.V().hasId(352292334324416512).values(\"name\")").execute();
-        Iterator<Result> results = resultSet.iterator();
-        List<Object> someList = new ArrayList<>();
-        results.forEachRemaining(result -> {
-            Object object = result.getObject();
-            someList.add(object);
-        });
-        System.out.println(someList.get(0));
     }
 }
+
