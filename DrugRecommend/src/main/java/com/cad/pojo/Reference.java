@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Reference {
     private ObjectId _id;
     private String title;
-    private String abs;
+    private String summary;
     private String author;
     private Boolean is_marked;
     private Boolean is_submit;
@@ -22,7 +22,7 @@ public class Reference {
     public String toString() {
         return "User{" +
                 "id=" + _id +
-                ", abs='" + abs + '\'' +
+                ", abs='" + summary + '\'' +
                 ", journal='" + journal + '\'' +
                 '}';
     }
@@ -43,12 +43,12 @@ public class Reference {
         return title;
     }
 
-    public void setAbs(String abs) {
-        this.abs = abs;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
-    public String getAbs() {
-        return abs;
+    public String getSummary() {
+        return summary;
     }
 
     public void setAuthor(String author) {
