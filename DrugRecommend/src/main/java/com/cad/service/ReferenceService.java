@@ -18,6 +18,7 @@ public class ReferenceService {
     }
 
     public List<Reference> getReferenceList(String category, String word){
+        List<Reference> res;
         if (category.equals("new")){
             Query query = new Query();
             query.limit(6);
