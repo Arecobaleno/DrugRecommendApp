@@ -38,7 +38,8 @@ public class SingleTest {
 //        MongoDatabase database = mongoClient.getDatabase("Hypertension");
 //        MongoCollection<Document> collection = database.getCollection("Paper");
 //        System.out.println(collection.countDocuments());
-
+//        GridFSFile result = gridFsTemplate
+//                .findOne(new Query(Criteria.where("title").is("中国高血压防治指南2018年修订版")));
     }
 }
 

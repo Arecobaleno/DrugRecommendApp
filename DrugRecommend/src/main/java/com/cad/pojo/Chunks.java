@@ -10,6 +10,4 @@ public class Chunks {
     private ObjectId files_id;
     private int n;
     private Binary data;
-
-
 }
