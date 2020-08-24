@@ -2,6 +2,7 @@ package com.cad.controller;
 
 import com.cad.entity.Query;
 import com.cad.pojo.Guide;
+import com.cad.pojo.Maker;
 import com.cad.service.GuideService;
 import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -36,10 +37,10 @@ public class GuideController {
         return guideService.guideDetail(title);
     }
 
-//    @GetMapping("/maker")
-//    public List<> getMaker(){
-//
-//    }
+    @GetMapping("/maker")
+    public List<Maker> getMaker(){
+        return guideService.getMakerList();
+    }
 
     // 获取指南列表，包括搜索(search)，最新(new)，按制作者(maker)，按年份(year)
     @PostMapping("/get")

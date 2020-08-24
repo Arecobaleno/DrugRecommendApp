@@ -1,6 +1,7 @@
 package com.cad.service;
 
 import com.cad.pojo.Guide;
+import com.cad.pojo.Maker;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.GridFSFindIterable;
@@ -64,6 +65,12 @@ public class GuideService {
         Query query = new Query();
         query.addCriteria(Criteria.where("title").is(title));
         return mongoTemplate.find(query, Guide.class);
+    }
+
+    // 获取制定者列表
+    public List<Maker> getMakerList(){
+        Query query = new Query();
+        return mongoTemplate.findAll(Maker.class);
     }
 
     // 获取指南列表
