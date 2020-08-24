@@ -4,14 +4,11 @@ import com.cad.entity.Query;
 import com.cad.pojo.Guide;
 import com.cad.pojo.Maker;
 import com.cad.service.GuideService;
-import com.mongodb.client.gridfs.GridFSFindIterable;
-import com.mongodb.client.gridfs.model.GridFSFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
