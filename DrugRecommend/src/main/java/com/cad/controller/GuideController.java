@@ -21,6 +21,7 @@ public class GuideController {
     @Autowired
     private GuideService guideService;
 
+    // 指南下载
     @RequestMapping("/download")
     public void guideDownload(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String title = request.getParameter("filename");
@@ -28,6 +29,7 @@ public class GuideController {
         guideService.guideDownload(title, response);
     }
 
+    // 指南详情
     @PostMapping("/detail")
     public List<Guide> guideDetail(@RequestBody Query query){
         String title = query.getContent();
@@ -39,6 +41,7 @@ public class GuideController {
 //
 //    }
 
+    // 获取指南列表，包括搜索(search)，最新(new)，按制作者(maker)，按年份(year)
     @PostMapping("/get")
     public List<Guide> getGuide(@RequestBody Query query){
         String category = query.getCategory();
