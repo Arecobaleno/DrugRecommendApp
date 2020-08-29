@@ -15,15 +15,34 @@ public class MainDao {
         return gremlin.gremlin("g.V().hasLabel('药品分类').properties('name')").execute();
     }
 
-    // 根据药品类名返回药品
+    // 根据药品化学名返回药品商品
     public ResultSet getMedicineByClass(String category){
-        return gremlin.gremlin("g.V().hasLabel('药品商品名').hasValue('"+ category +"').properties('name')").execute();
+        return gremlin.gremlin("g.V().hasLabel(\"药品化学名\").hasValue('" + category + "')" +
+                ".bothE().filter(label().is(Text.contains('成份'))).inV()").execute();
     }
 
-    // 搜索药物，返回药物名称list
+    // 根据药品类名返回药品化学名
+    public ResultSet getChemicalByClass(String category) {
+        return gremlin.gremlin("g.V().hasLabel(\"药品分类\").hasValue('" + category + "')" +
+                ".bothE().filter(label().is(Text.contains('化学名子类'))).outV()").execute();
+    }
+
+    // 搜索药物商品名，返回药物名称list
     public ResultSet searchDrugList(String content){
         return gremlin.gremlin("g.V().hasLabel(\"药品商品名\")" +
-                ".filter(values(\"name\").is(Text.contains('"+content+"'))).properties('name')").execute();
+                ".filter(values(\"name\").is(Text.contains('"+content+"')))").execute();
+    }
+
+    // 搜索药物化学名，返回list
+    public ResultSet searchChemicalList(String content){
+        return gremlin.gremlin("g.V().hasLabel('药品化学名')" +
+                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
+    }
+
+    // 搜索药物化学名，返回list
+    public ResultSet searchClassList(String content){
+        return gremlin.gremlin("g.V().hasLabel('药品分类')" +
+                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
     }
 
     // 搜索疾病，返回疾病list
@@ -53,6 +72,12 @@ public class MainDao {
     public ResultSet searchInteraction(String name){
         return gremlin.gremlin("g.V().hasLabel('药品化学名').hasValue('"
                 + name +"').bothE().filter(label().is(Text.contains('相互作用')))").execute();
+    }
+
+    // 相互作用候选词
+    public ResultSet interactionCandidateList(String content){
+        return gremlin.gremlin("g.V().hasLabel('药品化学名').filter(values('name')" +
+                ".is(Text.contains('"+content+"'))).values('name').limit(6)").execute();
     }
 
     public ResultSet getNameById(String id){

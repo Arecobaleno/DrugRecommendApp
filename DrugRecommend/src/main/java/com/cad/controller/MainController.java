@@ -1,12 +1,13 @@
 package com.cad.controller;
 
+import com.cad.entity.MultiInteraction;
 import com.cad.entity.Query;
-import com.cad.entity.MedicineClass;
 import com.cad.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /*
 首页模块controller
@@ -24,11 +25,25 @@ public class MainController {
         return mainService.getMedicineClassList();
     }
 
-    // 各药品分类所包含的药品展示
-    @RequestMapping(value = "/medicine_by_class", method = RequestMethod.POST)
-    public List<Object> medicineByClassList(@RequestBody MedicineClass category){
-        String category_temp = category.getCategory();
-        return mainService.getMedicineByClassList(category_temp);
+    // 各药品化学名所包含的药品展示
+    @RequestMapping(value = "/medicine_by_chemical", method = RequestMethod.POST)
+    public List<Object> medicineByClassList(@RequestBody Query query){
+        String category = query.getContent();
+        return mainService.getMedicineByClassList(category);
+    }
+
+    // 根据药品分类展示该类别下的药品化学名列表
+    @PostMapping(value = "/chemical_by_class")
+    public List<Object> chemicalByClass(@RequestBody Query query){
+        String category = query.getContent();
+        return mainService.getChemicalList(category);
+    }
+
+    //药品查询
+    @PostMapping("/medicine_query")
+    public List<Map<String, Object>> medicineQuery(@RequestBody Query query){
+        String content = query.getContent();
+        return mainService.medicineQueryList(content);
     }
 
     // 查询通用接口，包括全局查询(all)、疾病查询(disease)、药品查询或相互作用(drug)
@@ -45,5 +60,19 @@ public class MainController {
         String category = query.getCategory();
         String name = query.getContent();
         return mainService.queryDetail(category, name);
+    }
+
+    // 相互作用精准搜索返回详情
+    @PostMapping("/interaction_accurate")
+    public List<Object> interactionAccurate(@RequestBody MultiInteraction multiInteraction){
+        List<String> content = multiInteraction.getContent();
+        return mainService.getInteractionAccurate(content);
+    }
+
+    // 相互作用补全候选词
+    @PostMapping("/interaction_candidate")
+    public List<Object> interactionCandidate(@RequestBody Query query){
+        String content = query.getContent();
+        return mainService.getInteractionCandidate(content);
     }
 }

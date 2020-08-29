@@ -27,19 +27,17 @@ import java.util.List;
 // 模糊查询g.V().hasLabel("药品商品名").filter(values("name").is(Text.contains("高")))
 // 相互作用 g.V().hasLabel('药品商品名').hasValue('开富林 Kai Fu Lin').inE().outV().path()
 // 含相互作用的关系 g.V().hasLabel('药品商品名').hasValue('开富林 Kai Fu Lin').inE().filter(label().is(Text.contains("相互作用")))
+
+// g.V().hasLabel("药品分类").bothE().filter(label().is(Text.contains('化学名子类'))).bothV()
 public class SingleTest {
     public static void main(String[] args){
-        //MongoClient mongoClient = MongoClients.create("mongodb://114.67.200.39:27817");
-//        MongoClient mongoClient = MongoClients.create(
-//                MongoClientSettings.builder()
-//                        .applyToClusterSettings(builder ->
-//                                builder.hosts(Arrays.asList(new ServerAddress("114.67.200.39", 27817))))
-//                        .build());
-//        MongoDatabase database = mongoClient.getDatabase("Hypertension");
-//        MongoCollection<Document> collection = database.getCollection("Paper");
-//        System.out.println(collection.countDocuments());
-//        GridFSFile result = gridFsTemplate
-//                .findOne(new Query(Criteria.where("title").is("中国高血压防治指南2018年修订版")));
+        int a=0;
+        change(a);
+        System.out.println("a:"+a);
+    }
+
+    public static void change(int a){
+        a = 3;
     }
 }
 
