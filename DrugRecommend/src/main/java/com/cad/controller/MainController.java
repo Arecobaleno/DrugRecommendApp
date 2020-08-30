@@ -39,6 +39,14 @@ public class MainController {
         return mainService.getChemicalList(category);
     }
 
+    // 药品商品名逆向获取药品化学名
+    @RequestMapping(value = "/return_chemical", method = RequestMethod.POST)
+    public List<Object> returnChemical(@RequestBody Query query) {
+        String content = query.getContent();
+        return mainService.chemicalByMedicine(content);
+    }
+
+
     //药品查询
     @PostMapping("/medicine_query")
     public List<Map<String, Object>> medicineQuery(@RequestBody Query query){

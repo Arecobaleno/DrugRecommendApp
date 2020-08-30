@@ -45,6 +45,12 @@ public class MainService {
         return res;
     }
 
+    // 药品商品名逆向返回药品化学名
+    public List<Object> chemicalByMedicine(String content){
+        ResultSet resultSet=mainDao.chemicalByMedicine(content);
+        return getNameList(resultSet);
+    }
+
     // 药品查询返回列表
     public List<Map<String, Object>> medicineQueryList(String content){
         ResultSet medicineSet = mainDao.searchDrugList(content);

@@ -21,6 +21,12 @@ public class MainDao {
                 ".bothE().filter(label().is(Text.contains('成份'))).inV()").execute();
     }
 
+    // 根据药品商品名逆向返回药品化学名
+    public ResultSet chemicalByMedicine(String category){
+        return gremlin.gremlin("g.V().hasLabel(\"药品商品名\").hasValue('" + category + "')" +
+                ".bothE().filter(label().is(Text.contains('成份'))).outV()").execute();
+    }
+
     // 根据药品类名返回药品化学名
     public ResultSet getChemicalByClass(String category) {
         return gremlin.gremlin("g.V().hasLabel(\"药品分类\").hasValue('" + category + "')" +
