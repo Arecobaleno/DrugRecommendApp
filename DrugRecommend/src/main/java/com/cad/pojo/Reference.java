@@ -17,6 +17,24 @@ public class Reference {
     private String src;
     private String url;
     private Boolean valid;
+    private Integer count;
+    private String time;
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     @Override
     public String toString() {

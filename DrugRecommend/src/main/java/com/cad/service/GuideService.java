@@ -42,6 +42,7 @@ public class GuideService {
             String path = tempFile.getAbsolutePath();
             System.out.println("path="+path);
             response.setHeader("content-disposition", "attachment;filename="+URLEncoder.encode(title+".pdf", "UTF-8"));
+            response.setContentType("application/pdf");
             InputStream fis = new FileInputStream(tempFile);
             OutputStream out = response.getOutputStream();
             byte[] buffer = new byte[1024];

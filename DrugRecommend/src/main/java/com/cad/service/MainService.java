@@ -120,7 +120,34 @@ public class MainService {
             相互作用详情页
              */
             resultSet = mainDao.searchInteraction(name);
-            return getObjectAndName(resultSet);
+            Iterator<Result> results = resultSet.iterator();
+            List<Object> someList = new ArrayList<>();
+            results.forEachRemaining(result -> {
+                Object object = result.getObject();
+                String sourceId = ((Edge)object).sourceId().toString(); // 获取目标节点id
+                String sourceName = getName(sourceId).toString();
+                String tarId = ((Edge)object).targetId().toString(); // 获取目标节点id
+                String tarName = getName(tarId).toString();
+                String tName;
+                String sid;
+                String tid;
+                if (sourceName.equals(name)){
+                    tName = tarName;
+                    tid = tarId;
+                    sid = sourceId;
+                }
+                else {
+                    tName = sourceName;
+                    tid = sourceId;
+                    sid = tarId;
+                }
+                InteractionResult interactionResult = new InteractionResult();
+                interactionResult.setSourceName(getName(sid));
+                interactionResult.setEdgeResult(object);
+                interactionResult.setTargetName(getName(tid));
+                someList.add(interactionResult);
+            });
+            return someList;
         }
         return makeListObjects(resultSet);
     }
@@ -134,13 +161,29 @@ public class MainService {
             int finalI = i;
             results.forEachRemaining(result -> {
                 Object object = result.getObject();
-                String tarId = ((Edge)object).sourceId().toString(); // 获取目标节点id
-                String name = getName(tarId).toString();
+                String sourceId = ((Edge)object).sourceId().toString(); // 获取目标节点id
+                String sourceName = getName(sourceId).toString();
+                String tarId = ((Edge)object).targetId().toString(); // 获取目标节点id
+                String tarName = getName(tarId).toString();
+                String name;
+                String sid;
+                String tid;
+                if(sourceName.equals(contents.get(finalI))){
+                    name = tarName;
+                    tid = tarId;
+                    sid = sourceId;
+                }
+                else {
+                    name = sourceName;
+                    tid = sourceId;
+                    sid = tarId;
+                }
                 for(int j = finalI +1; j<contents.size(); j++){
                     if(name.equals(contents.get(j))){
                         InteractionResult interactionResult = new InteractionResult();
+                        interactionResult.setSourceName(getName(sid));
                         interactionResult.setEdgeResult(object);
-                        interactionResult.setTargetName(getName(tarId));
+                        interactionResult.setTargetName(getName(tid));
                         res.add(interactionResult);
                     }
                 }

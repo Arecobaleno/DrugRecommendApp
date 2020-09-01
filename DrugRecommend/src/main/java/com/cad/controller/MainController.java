@@ -26,7 +26,7 @@ public class MainController {
     }
 
     // 各药品化学名所包含的药品展示
-    @RequestMapping(value = "/medicine_by_chemical", method = RequestMethod.POST)
+    @PostMapping(value = "/medicine_by_chemical")
     public List<Object> medicineByClassList(@RequestBody Query query){
         String category = query.getContent();
         return mainService.getMedicineByClassList(category);
@@ -40,7 +40,7 @@ public class MainController {
     }
 
     // 药品商品名逆向获取药品化学名
-    @RequestMapping(value = "/return_chemical", method = RequestMethod.POST)
+    @PostMapping(value = "/return_chemical")
     public List<Object> returnChemical(@RequestBody Query query) {
         String content = query.getContent();
         return mainService.chemicalByMedicine(content);
@@ -55,7 +55,7 @@ public class MainController {
     }
 
     // 查询通用接口，包括全局查询(all)、疾病查询(disease)、药品查询或相互作用(drug)
-    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    @PostMapping(value = "/query")
     public List<Object> query(@RequestBody Query query){
         String category = query.getCategory();
         String content = query.getContent();
@@ -63,7 +63,7 @@ public class MainController {
     }
 
     // 返回疾病、药品、相互作用的详情
-    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    @PostMapping(value = "/detail")
     public List<Object> detail(@RequestBody Query query){
         String category = query.getCategory();
         String name = query.getContent();
