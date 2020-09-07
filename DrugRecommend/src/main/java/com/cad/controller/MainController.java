@@ -1,8 +1,11 @@
 package com.cad.controller;
 
+import com.cad.entity.DiseaseTree;
+import com.cad.entity.DiseaseTreeResult;
 import com.cad.entity.MultiInteraction;
 import com.cad.entity.Query;
 import com.cad.service.MainService;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.util.QEncoderStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +49,12 @@ public class MainController {
         return mainService.chemicalByMedicine(content);
     }
 
+    // 根据疾病获取疾病树形信息
+    @PostMapping(value = "/disease_tree")
+    public DiseaseTreeResult getDiseaseTree(@RequestBody Query query) {
+        String content = query.getContent();
+        return mainService.getDiseaseTreeResult(content);
+    }
 
     //药品查询
     @PostMapping("/medicine_query")
@@ -54,7 +63,7 @@ public class MainController {
         return mainService.medicineQueryList(content);
     }
 
-    // 查询通用接口，包括全局查询(all)、疾病查询(disease)、药品查询或相互作用(drug)
+    // 查询通用接口，包括全局查询(all)、疾病查询(disease)和相互作用(drug)
     @PostMapping(value = "/query")
     public List<Object> query(@RequestBody Query query){
         String category = query.getCategory();

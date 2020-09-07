@@ -4,6 +4,8 @@ import com.baidu.hugegraph.structure.graph.Vertex;
 import com.baidu.hugegraph.structure.gremlin.Result;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import com.cad.dao.MainDao;
+import com.cad.entity.DiseaseTree;
+import com.cad.entity.DiseaseTreeResult;
 import com.cad.entity.InteractionResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,50 @@ import java.util.*;
 public class MainService {
     @Autowired
     private MainDao mainDao;
+
+    // 根据所搜索的疾病返回的疾病树结构（自底向上）
+    public DiseaseTreeResult getDiseaseTreeResult(String disease) {
+        List<String> path = new LinkedList<>();
+        String label;
+        String node = disease;
+        do {
+            ResultSet resultSet = mainDao.getFatherNode(node);
+            label =  resultSet.get(0).getVertex().label();
+            String name = resultSet.get(0).getVertex().property("name").toString();
+            path.add(0, node);
+            node = name;
+        }while(!label.equals("疾病大类"));
+        path.add(0,node);
+        DiseaseTree diseaseTree = buildDiseaseTree(node);
+        DiseaseTreeResult diseaseTreeResult = new DiseaseTreeResult();
+        diseaseTreeResult.setDiseaseTree(diseaseTree);
+        diseaseTreeResult.setPath(path);
+        return diseaseTreeResult;
+    }
+
+    // 根据此疾病节点构建子树（自顶向下）
+    public DiseaseTree buildDiseaseTree(String disease){
+        DiseaseTree diseaseTree = new DiseaseTree();
+        diseaseTree.setName(disease);
+        ResultSet resultSet = mainDao.getChildNode(disease);
+        Iterator<Result> results = resultSet.iterator();
+        List<DiseaseTree> subTitle = new ArrayList<>();
+        List<String> leafTitle = new ArrayList<>();
+        results.forEachRemaining(result -> {
+            Object object = result.getObject();
+            String label = ((Vertex)object).label();
+            String name = ((Vertex)object).property("name").toString();
+            if(label.equals("疾病类型")){
+                subTitle.add(buildDiseaseTree(name));
+            }
+            else if(label.equals("疾病")){
+                leafTitle.add(name);
+            }
+        });
+        diseaseTree.setSubTitle(subTitle);
+        diseaseTree.setLeafTitle(leafTitle);
+        return diseaseTree;
+    }
 
     // 返回“药品分类”列表，用于展示在药品总览中
     public List<Object> getMedicineClassList() {

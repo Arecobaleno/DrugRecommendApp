@@ -10,6 +10,16 @@ public class MainDao {
     HugeClient hugeClient = new HugeClient("http://114.67.200.39:44640","hugegraph");
     GremlinManager gremlin = hugeClient.gremlin();
 
+    // 根据名称寻找疾病树的父节点
+    public ResultSet getFatherNode(String name) {
+        return gremlin.gremlin("g.V().hasValue('" + name + "').in().filter(label().is(Text.contains('疾病')))").execute();
+    }
+
+    // 根据名称寻找疾病树的子节点
+    public ResultSet getChildNode(String name) {
+        return gremlin.gremlin("g.V().hasValue('" + name + "').out().filter(label().is(Text.contains('疾病')))").execute();
+    }
+
     // 搜索所有的“药品分类”名称
     public ResultSet getMedicineClass(){
         return gremlin.gremlin("g.V().hasLabel('药品分类').properties('name')").execute();
