@@ -4,14 +4,16 @@ import com.baidu.hugegraph.structure.graph.Vertex;
 import com.baidu.hugegraph.structure.gremlin.Result;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import com.cad.dao.MainDao;
-import com.cad.entity.DiseaseTree;
-import com.cad.entity.DiseaseTreeResult;
-import com.cad.entity.InteractionResult;
+import com.cad.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+
+/**
+ * 首页模块Service
+ */
 @Service
 public class MainService {
     @Autowired
@@ -145,17 +147,59 @@ public class MainService {
         });
     }
 
-    //返回查询详情结果的通用接口，包括全局查询(all)、单疾病用药查询(disease)、药品查询(drug)和相互作用查询(interaction)
+    //疾病用药详情
+    public DiseaseResult diseaseDetail(String name) {
+        DiseaseResult diseaseResult = new DiseaseResult();
+        List<DiseaseDetail> indication = new ArrayList<>();
+        List<DiseaseDetail> contraindication = new ArrayList<>();
+        ResultSet resultSet = mainDao.indication(name);
+        Iterator<Result> results = resultSet.iterator();
+        results.forEachRemaining(result -> {
+            DiseaseDetail diseaseDetail = new DiseaseDetail();
+            String type = "适应";
+            diseaseDetail.setType(type);
+            buildDiseaseDetail(indication, result, diseaseDetail);
+        });
+        ResultSet resultSet_ = mainDao.contraindication(name);
+        Iterator<Result> results_ = resultSet_.iterator();
+        results_.forEachRemaining(result -> {
+            DiseaseDetail diseaseDetail = new DiseaseDetail();
+            String type = "禁忌";
+            diseaseDetail.setType(type);
+            buildDiseaseDetail(contraindication, result, diseaseDetail);
+        });
+        diseaseResult.setIndication(indication);
+        diseaseResult.setContraindication(contraindication);
+        return diseaseResult;
+    }
+
+    private void buildDiseaseDetail(List<DiseaseDetail> indication, Result result, DiseaseDetail diseaseDetail) {
+        diseaseDetail.setProperty(result.getEdge().properties());
+        String drugId = result.getEdge().sourceId().toString(); // 获取目标节点id
+        String group = result.getEdge().property("group").toString();
+        String drugName = getName(drugId).toString();
+        diseaseDetail.setDrugName(drugName);
+        ResultSet purposeResult = mainDao.purpose(drugId, group);
+        if (purposeResult.size()!=0){
+            diseaseDetail.setPurpose(getName(purposeResult.get(0).getVertex().id().toString()).toString());
+        }
+        ResultSet banResult = mainDao.people(drugId, group);
+        List<String> banPeople = new ArrayList<>();
+        Iterator<Result> banResults = banResult.iterator();
+        banResults.forEachRemaining(sult -> {
+            Object object = sult.getObject();
+            String tarId = ((Vertex)object).id().toString(); // 获取目标节点id
+            String nameObject = getName(tarId).toString();
+            banPeople.add(nameObject);
+        });
+        diseaseDetail.setBanPeople(banPeople);
+        indication.add(diseaseDetail);
+    }
+
+    //返回查询详情结果的通用接口，包括全局查询(all)、药品查询(drug)和相互作用查询(interaction)
     public List<Object> queryDetail(String category, String name){
         ResultSet resultSet = null;
-        if(category.equals("disease")){
-            /*
-            单疾病用药推荐详情页
-             */
-            resultSet = mainDao.searchDisease(name);
-            return getObjectAndName(resultSet);
-        }
-        else if(category.equals("drug")){
+        if(category.equals("drug")){
             /*
             药品详情页
              */

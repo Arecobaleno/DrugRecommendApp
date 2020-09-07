@@ -5,6 +5,11 @@ import com.baidu.hugegraph.driver.HugeClient;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import org.springframework.stereotype.Repository;
 
+
+/**
+ * 首页模块Dao
+ */
+
 @Repository
 public class MainDao {
     HugeClient hugeClient = new HugeClient("http://114.67.200.39:44640","hugegraph");
@@ -78,11 +83,31 @@ public class MainDao {
         return gremlin.gremlin("g.V().hasLabel('药品商品名').hasValue('"+ name +"')").execute();
     }
 
-    // 返回疾病详情(还需修改，需要添加用药推荐的功能
-    public ResultSet searchDisease(String name){
-        return gremlin.gremlin("g.V().hasLabel('疾病','疾病类型').hasValue('"
+    // 返回疾病适应的药品
+    public ResultSet indication(String name){
+        return gremlin.gremlin("g.V().hasValue('"
                 + name +"').bothE().filter(label().is(Text.contains('适应证')))").execute();
     }
+
+    // 返回疾病禁忌的药品
+    public ResultSet contraindication(String name){
+        return gremlin.gremlin("g.V().hasValue('"
+                + name +"').bothE().filter(label().is(Text.contains('禁忌证')))").execute();
+    }
+
+    // 根据id返回药品的用药目的
+    public ResultSet purpose(String id, String group){
+        return gremlin.gremlin("g.V(" + id + ").outE().filter(label().is(Text.contains('用药目的')))" +
+                ".has('group'," + group + ").inV()").execute();
+    }
+
+    // 根据id返回药品的禁忌人群
+    public ResultSet people(String id, String group){
+        return gremlin.gremlin("g.V(" + id + ").outE().filter(label().is(Text.contains('禁忌人群')))" +
+                ".or(has('group'," + group + "), has('group',0)).inV()").execute();
+    }
+
+
 
     // 返回name商品具有相互作用的边
     public ResultSet searchInteraction(String name){

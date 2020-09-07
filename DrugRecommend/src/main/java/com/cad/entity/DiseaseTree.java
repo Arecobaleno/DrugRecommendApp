@@ -2,6 +2,10 @@ package com.cad.entity;
 
 import java.util.List;
 
+
+/**
+ * 疾病树
+ */
 public class DiseaseTree {
     private String name;
     private List<String> leafTitle;

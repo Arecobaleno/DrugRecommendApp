@@ -1,11 +1,10 @@
 package com.cad.controller;
 
-import com.cad.entity.DiseaseTree;
+import com.cad.entity.DiseaseResult;
 import com.cad.entity.DiseaseTreeResult;
 import com.cad.entity.MultiInteraction;
 import com.cad.entity.Query;
 import com.cad.service.MainService;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.QEncoderStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,7 +70,14 @@ public class MainController {
         return mainService.queryList(category, content);
     }
 
-    // 返回疾病、药品、相互作用的详情
+    // 疾病详情
+    @PostMapping(value = "/disease_detail")
+    public DiseaseResult diseaseDetail(@RequestBody Query query){
+        String name = query.getContent();
+        return mainService.diseaseDetail(name);
+    }
+
+    // 返回药品、相互作用的详情
     @PostMapping(value = "/detail")
     public List<Object> detail(@RequestBody Query query){
         String category = query.getCategory();

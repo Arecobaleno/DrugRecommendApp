@@ -1,8 +1,11 @@
 package com.cad.entity;
 
 import java.util.List;
-import java.util.Stack;
 
+
+/**
+ * 疾病树型结构返回
+ */
 public class DiseaseTreeResult {
     private DiseaseTree diseaseTree;
     private List<String> path;
