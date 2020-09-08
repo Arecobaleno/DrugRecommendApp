@@ -1,7 +1,9 @@
 package com.cad.pojo;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "AppUsers")
 public class AppUsers {
     private ObjectId _id;
     private Integer authority;
