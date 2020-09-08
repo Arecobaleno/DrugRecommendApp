@@ -32,7 +32,7 @@ public class MyService {
     public Result login(String nickname, String password){
         Criteria criteria = new Criteria();
         criteria.andOperator(Criteria.where("nickname").is(nickname),
-                Criteria.where("password").regex(password));
+                Criteria.where("password").is(password));
         Query query = new Query(criteria);
         if(mongoTemplate.find(query, AppUsers.class).size()==1){
             return new Result(true, StatusCode.OK,"登录成功");
