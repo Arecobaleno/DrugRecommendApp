@@ -19,18 +19,38 @@ public class MainService {
     @Autowired
     private MainDao mainDao;
 
+    // 全局疾病搜索
+    public List<Object> overallDisease(String content){
+        List<Object> result = new ArrayList<>();
+        result.addAll(queryList("disease", content));
+        result.addAll(makeListObjects(mainDao.drugNeighbourDisease(content)));
+        return result;
+    }
+
+    // 全局药品搜索
+    public List<Map<String, Object>> overallDrug(String content) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        result.addAll(medicineQueryList(content));
+        List<Map<String, Object>> temp = new ArrayList<>();
+        getNameAndLabel(mainDao.diseaseNeighbourDrug(content), temp);
+        result.addAll(temp);
+        return result;
+    }
+
     // 根据所搜索的疾病返回的疾病树结构（自底向上）
     public DiseaseTreeResult getDiseaseTreeResult(String disease) {
         List<String> path = new LinkedList<>();
-        String label;
+        ResultSet resultSet = mainDao.getDiseaseNode(disease);
+        String label = resultSet.get(0).getVertex().label();
+        path.add(disease);
         String node = disease;
-        do {
-            ResultSet resultSet = mainDao.getFatherNode(node);
+        while(!label.equals("疾病大类")){
+            resultSet = mainDao.getFatherNode(node);
             label =  resultSet.get(0).getVertex().label();
             String name = resultSet.get(0).getVertex().property("name").toString();
             path.add(0, node);
             node = name;
-        }while(!label.equals("疾病大类"));
+        }
         path.add(0,node);
         DiseaseTree diseaseTree = buildDiseaseTree(node);
         DiseaseTreeResult diseaseTreeResult = new DiseaseTreeResult();
@@ -102,24 +122,19 @@ public class MainService {
     // 药品查询返回列表
     public List<Map<String, Object>> medicineQueryList(String content){
         ResultSet medicineSet = mainDao.searchDrugList(content);
-        ResultSet chemicalSet = mainDao.searchChemicalList(content);
-        ResultSet classSet = mainDao.searchClassList(content);
+//        ResultSet chemicalSet = mainDao.searchChemicalList(content);
+//        ResultSet classSet = mainDao.searchClassList(content);
         List<Map<String,Object>> res = new ArrayList<>();
         getNameAndLabel(medicineSet, res);
-        getNameAndLabel(chemicalSet, res);
-        getNameAndLabel(classSet, res);
+//        getNameAndLabel(chemicalSet, res);
+//        getNameAndLabel(classSet, res);
         return res;
     }
 
-    // 返回查询列表结果的通用接口，包括全局查询(all)、单疾病用药查询(disease)和相互作用查询(interaction)
+    // 返回查询列表结果的通用接口,单疾病用药查询(disease)和相互作用查询(interaction)
     public List<Object> queryList(String category, String content){
         ResultSet resultSet = null;
-        if (category.equals("all")){
-            /*
-            全局查询
-             */
-        }
-        else if(category.equals("disease")){
+        if(category.equals("disease")){
             /*
             单疾病用药查询
              */

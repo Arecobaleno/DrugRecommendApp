@@ -21,6 +21,20 @@ public class MainController {
     @Autowired
     private MainService mainService;
 
+    // 全局疾病搜索条目，实现药品附近一跳功能
+    @PostMapping(value = "/overall_disease")
+    public List<Object> overallDisease(@RequestBody Query query){
+        String content = query.getContent();
+        return mainService.overallDisease(content);
+    }
+
+    // 全局药品搜索，实现疾病附近一跳
+    @PostMapping(value = "/overall_drug")
+    public List<Map<String, Object>> overallDrug(@RequestBody Query query){
+        String content = query.getContent();
+        return mainService.overallDrug(content);
+    }
+
     // 以List<String>形式返回“药品分类”，用于展示在药品总览中
     @GetMapping("/medicine_class")
     public List<Object> medicineClassList(){
@@ -62,7 +76,7 @@ public class MainController {
         return mainService.medicineQueryList(content);
     }
 
-    // 查询通用接口，包括全局查询(all)、疾病查询(disease)和相互作用(drug)
+    // 疾病查询(disease)和相互作用查询(disease)
     @PostMapping(value = "/query")
     public List<Object> query(@RequestBody Query query){
         String category = query.getCategory();

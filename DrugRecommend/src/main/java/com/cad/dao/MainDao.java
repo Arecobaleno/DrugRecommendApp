@@ -15,6 +15,23 @@ public class MainDao {
     HugeClient hugeClient = new HugeClient("http://114.67.200.39:44640","hugegraph");
     GremlinManager gremlin = hugeClient.gremlin();
 
+    // 搜索药品附近一跳的相关疾病
+    public ResultSet drugNeighbourDisease(String content) {
+        return gremlin.gremlin("g.V().and(filter(values('name').is(Text.contains('" + content + "')))," +
+                "filter(label().is(Text.contains('药品')))).both().filter(label().is(Text.contains('疾病')))").execute();
+    }
+
+    // 搜索疾病附近一跳的相关药品
+    public ResultSet diseaseNeighbourDrug(String content) {
+        return gremlin.gremlin("g.V().and(filter(values('name').is(Text.contains('" + content + "')))," +
+                "filter(label().is(Text.contains('疾病')))).both().filter(label().is(Text.contains('药品')))").execute();
+    }
+
+    // 根据名称寻找此节点
+    public ResultSet getDiseaseNode(String name) {
+        return gremlin.gremlin("g.V().hasValue('" + name + "').filter(label().is(Text.contains('疾病')))").execute();
+    }
+
     // 根据名称寻找疾病树的父节点
     public ResultSet getFatherNode(String name) {
         return gremlin.gremlin("g.V().hasValue('" + name + "').in().filter(label().is(Text.contains('疾病')))").execute();
@@ -50,21 +67,21 @@ public class MainDao {
 
     // 搜索药物商品名，返回药物名称list
     public ResultSet searchDrugList(String content){
-        return gremlin.gremlin("g.V().hasLabel(\"药品商品名\")" +
-                ".filter(values(\"name\").is(Text.contains('"+content+"')))").execute();
+        return gremlin.gremlin("g.V().and(filter(values('name').is(Text.contains('" + content + "')))," +
+                "filter(label().is(Text.contains('药品'))))").execute();
     }
 
-    // 搜索药物化学名，返回list
-    public ResultSet searchChemicalList(String content){
-        return gremlin.gremlin("g.V().hasLabel('药品化学名')" +
-                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
-    }
-
-    // 搜索药物化学名，返回list
-    public ResultSet searchClassList(String content){
-        return gremlin.gremlin("g.V().hasLabel('药品分类')" +
-                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
-    }
+//    // 搜索药物化学名，返回list
+//    public ResultSet searchChemicalList(String content){
+//        return gremlin.gremlin("g.V().hasLabel('药品化学名')" +
+//                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
+//    }
+//
+//    // 搜索药物分类名，返回list
+//    public ResultSet searchClassList(String content){
+//        return gremlin.gremlin("g.V().hasLabel('药品分类')" +
+//                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
+//    }
 
     // 搜索疾病，返回疾病list
     public ResultSet searchDiseaseList(String content){
@@ -106,8 +123,6 @@ public class MainDao {
         return gremlin.gremlin("g.V(" + id + ").outE().filter(label().is(Text.contains('禁忌人群')))" +
                 ".or(has('group'," + group + "), has('group',0)).inV()").execute();
     }
-
-
 
     // 返回name商品具有相互作用的边
     public ResultSet searchInteraction(String name){
