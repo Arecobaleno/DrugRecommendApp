@@ -1,5 +1,6 @@
 package com.cad.controller;
 
+import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import com.cad.entity.DiseaseResult;
 import com.cad.entity.DiseaseTreeResult;
 import com.cad.entity.MultiInteraction;
@@ -8,6 +9,7 @@ import com.cad.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,21 +45,21 @@ public class MainController {
 
     // 各药品化学名所包含的药品展示
     @PostMapping(value = "/medicine_by_chemical")
-    public List<Object> medicineByClassList(@RequestBody Query query){
+    public ResultSet medicineByClassList(@RequestBody Query query){
         String category = query.getContent();
         return mainService.getMedicineByClassList(category);
     }
 
     // 根据药品分类展示该类别下的药品化学名列表
     @PostMapping(value = "/chemical_by_class")
-    public List<Object> chemicalByClass(@RequestBody Query query){
+    public ResultSet chemicalByClass(@RequestBody Query query){
         String category = query.getContent();
         return mainService.getChemicalList(category);
     }
 
     // 药品商品名逆向获取药品化学名
     @PostMapping(value = "/return_chemical")
-    public List<Object> returnChemical(@RequestBody Query query) {
+    public ResultSet returnChemical(@RequestBody Query query) {
         String content = query.getContent();
         return mainService.chemicalByMedicine(content);
     }

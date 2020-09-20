@@ -1,5 +1,6 @@
 package com.cad.dao;
 
+import com.baidu.hugegraph.driver.GraphManager;
 import com.baidu.hugegraph.driver.GremlinManager;
 import com.baidu.hugegraph.driver.HugeClient;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
@@ -47,22 +48,22 @@ public class MainDao {
         return gremlin.gremlin("g.V().hasLabel('药品分类').properties('name')").execute();
     }
 
-    // 根据药品化学名返回药品商品
+    // 根据药品化学名返回药品商品名
     public ResultSet getMedicineByClass(String category){
         return gremlin.gremlin("g.V().hasLabel(\"药品化学名\").hasValue('" + category + "')" +
-                ".bothE().filter(label().is(Text.contains('成份'))).inV()").execute();
+                ".bothE().filter(label().is(Text.contains('成份'))).inV().values('name')").execute();
     }
 
     // 根据药品商品名逆向返回药品化学名
     public ResultSet chemicalByMedicine(String category){
         return gremlin.gremlin("g.V().hasLabel(\"药品商品名\").hasValue('" + category + "')" +
-                ".bothE().filter(label().is(Text.contains('成份'))).outV()").execute();
+                ".bothE().filter(label().is(Text.contains('成份'))).outV().values('name')").execute();
     }
 
     // 根据药品类名返回药品化学名
     public ResultSet getChemicalByClass(String category) {
         return gremlin.gremlin("g.V().hasLabel(\"药品分类\").hasValue('" + category + "')" +
-                ".bothE().filter(label().is(Text.contains('化学名子类'))).outV()").execute();
+                ".bothE().filter(label().is(Text.contains('化学名子类'))).outV().values('name')").execute();
     }
 
     // 搜索药物商品名，返回药物名称list
@@ -70,18 +71,6 @@ public class MainDao {
         return gremlin.gremlin("g.V().and(filter(values('name').is(Text.contains('" + content + "')))," +
                 "filter(label().is(Text.contains('药品'))))").execute();
     }
-
-//    // 搜索药物化学名，返回list
-//    public ResultSet searchChemicalList(String content){
-//        return gremlin.gremlin("g.V().hasLabel('药品化学名')" +
-//                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
-//    }
-//
-//    // 搜索药物分类名，返回list
-//    public ResultSet searchClassList(String content){
-//        return gremlin.gremlin("g.V().hasLabel('药品分类')" +
-//                ".filter(values('name').is(Text.contains('"+content +"')))").execute();
-//    }
 
     // 搜索疾病，返回疾病list
     public ResultSet searchDiseaseList(String content){
@@ -115,7 +104,7 @@ public class MainDao {
     // 根据id返回药品的用药目的
     public ResultSet purpose(String id, String group){
         return gremlin.gremlin("g.V(" + id + ").outE().filter(label().is(Text.contains('用药目的')))" +
-                ".has('group'," + group + ").inV()").execute();
+                ".has('group'," + group + ").inV() ").execute();
     }
 
     // 根据id返回药品的禁忌人群
@@ -124,7 +113,7 @@ public class MainDao {
                 ".or(has('group'," + group + "), has('group',0)).inV()").execute();
     }
 
-    // 返回name商品具有相互作用的边
+    // 返回name具有相互作用的边
     public ResultSet searchInteraction(String name){
         return gremlin.gremlin("g.V().hasLabel('药品化学名').hasValue('"
                 + name +"').bothE().filter(label().is(Text.contains('相互作用')))").execute();

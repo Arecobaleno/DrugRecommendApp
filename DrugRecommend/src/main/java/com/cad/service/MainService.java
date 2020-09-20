@@ -90,33 +90,18 @@ public class MainService {
     }
 
     // 以药品分类返回该分来下的药品化学名列表
-    public List<Object> getChemicalList(String category) {
-        ResultSet resultSet = mainDao.getChemicalByClass(category);
-        return getNameList(resultSet);
+    public ResultSet getChemicalList(String category) {
+        return mainDao.getChemicalByClass(category);
     }
 
     //返回某药品化学名下的药品商品信息
-    public List<Object> getMedicineByClassList(String category){
-        ResultSet resultSet = mainDao.getMedicineByClass(category);
-        return getNameList(resultSet);
-    }
-
-    private List<Object> getNameList(ResultSet resultSet) {
-        List<Object> res = new ArrayList<>();
-        Iterator<Result> results = resultSet.iterator();
-        results.forEachRemaining(result -> {
-            Object object = result.getObject();
-            String tarId = ((Vertex)object).id().toString(); // 获取目标节点id
-            Object nameObject = getName(tarId);
-            res.add(nameObject);
-        });
-        return res;
+    public ResultSet getMedicineByClassList(String category){
+        return mainDao.getMedicineByClass(category);
     }
 
     // 药品商品名逆向返回药品化学名
-    public List<Object> chemicalByMedicine(String content){
-        ResultSet resultSet=mainDao.chemicalByMedicine(content);
-        return getNameList(resultSet);
+    public ResultSet chemicalByMedicine(String content){
+        return mainDao.chemicalByMedicine(content);
     }
 
     // 药品查询返回列表
@@ -211,7 +196,7 @@ public class MainService {
         indication.add(diseaseDetail);
     }
 
-    //返回查询详情结果的通用接口，包括全局查询(all)、药品查询(drug)和相互作用查询(interaction)
+    //返回查询详情结果的通用接口，包括药品查询(drug)和相互作用查询(interaction)
     public List<Object> queryDetail(String category, String name){
         ResultSet resultSet = null;
         if(category.equals("drug")){
@@ -231,7 +216,7 @@ public class MainService {
                 Object object = result.getObject();
                 String sourceId = ((Edge)object).sourceId().toString(); // 获取目标节点id
                 String sourceName = getName(sourceId).toString();
-                String tarId = ((Edge)object).targetId().toString(); // 获取目标节点id
+                String tarId = ((Edge)object).targetId().toString(); // 获取源节点id
                 String tarName = getName(tarId).toString();
                 String tName;
                 String sid;
