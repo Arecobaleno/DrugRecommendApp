@@ -1,9 +1,11 @@
 package com.cad.service;
 
+import com.cad.pojo.Guide;
 import com.cad.pojo.Reference;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,11 @@ public class ReferenceService {
             query.addCriteria(Criteria.where("title").regex(word));
             res = mongoTemplate.find(query, Reference.class);
         }
+        else if (category.equals("year")){
+            Query query = new Query();
+            query.addCriteria(Criteria.where("year").regex(word));
+            res = mongoTemplate.find(query, Reference.class);
+        }
         else{
             res = null;
         }
@@ -37,6 +44,12 @@ public class ReferenceService {
     public List<Reference> referenceDetail(String word){
         Query query = new Query();
         query.addCriteria(Criteria.where("title").is(word));
-        return mongoTemplate.find(query, Reference.class);
+        List<Reference> sample = mongoTemplate.find(query, Reference.class);
+        if(sample.size()==1){
+            Integer count = sample.get(0).getCount();
+            Update update = Update.update("count", count+1);
+            mongoTemplate.updateMulti(query, update, "TestCnkiPaper");
+        }
+        return sample;
     }
 }

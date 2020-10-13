@@ -3,12 +3,15 @@ package com.cad.pojo;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "Paper")
+@Document(collection = "TestCnkiPaper")
 public class Reference {
     private ObjectId _id;
     private String title;
     private String summary;
     private String author;
+    private String author_info;
+    private String date;
+    private String year;
     private Boolean is_marked;
     private Boolean is_submit;
     private Boolean is_update;
@@ -18,7 +21,30 @@ public class Reference {
     private String url;
     private Boolean valid;
     private Integer count;
-    private String time;
+
+    public String getAuthor_info() {
+        return author_info;
+    }
+
+    public void setAuthor_info(String author_info) {
+        this.author_info = author_info;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
 
     public void setCount(Integer count) {
         this.count = count;
@@ -26,14 +52,6 @@ public class Reference {
 
     public Integer getCount() {
         return count;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     @Override

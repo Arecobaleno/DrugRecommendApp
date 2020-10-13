@@ -1,6 +1,5 @@
 package com.cad.dao;
 
-import com.baidu.hugegraph.driver.GraphManager;
 import com.baidu.hugegraph.driver.GremlinManager;
 import com.baidu.hugegraph.driver.HugeClient;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
@@ -31,6 +30,14 @@ public class MainDao {
     // 根据名称寻找此节点
     public ResultSet getDiseaseNode(String name) {
         return gremlin.gremlin("g.V().hasValue('" + name + "').filter(label().is(Text.contains('疾病')))").execute();
+    }
+
+    // 根据疾病向上搜索其所属疾病大类
+    public ResultSet getDiseaseClass(String name) {
+        return gremlin.gremlin("g.V().hasValue('"+ name +"')" +
+                ".repeat(both().simplePath()).until(hasLabel('疾病大类')" +
+                ".or().loops().is(gte(10))).hasLabel('疾病大类')" +
+                ".path()").execute();
     }
 
     // 根据名称寻找疾病树的父节点

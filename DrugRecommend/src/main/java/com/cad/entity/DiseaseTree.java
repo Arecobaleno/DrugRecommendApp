@@ -1,11 +1,15 @@
 package com.cad.entity;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
 
 
 /**
  * 疾病树
  */
+
+@Document(collection = "HypertensionTree")
 public class DiseaseTree {
     private String name;
     private List<String> leafTitle;

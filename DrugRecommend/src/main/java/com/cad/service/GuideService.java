@@ -2,11 +2,14 @@ package com.cad.service;
 
 import com.cad.pojo.Guide;
 import com.cad.pojo.Maker;
+import com.mongodb.WriteResult;
 import com.mongodb.client.gridfs.model.GridFSFile;
+import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
@@ -40,7 +43,6 @@ public class GuideService {
                 os.write(bs, 0, len);
             }
             String path = tempFile.getAbsolutePath();
-            System.out.println("path="+path);
             response.setHeader("content-disposition", "attachment;filename="+URLEncoder.encode(title+".pdf", "UTF-8"));
             response.setContentType("application/pdf");
             InputStream fis = new FileInputStream(tempFile);
@@ -59,7 +61,13 @@ public class GuideService {
     public List<Guide> guideDetail(String title){
         Query query = new Query();
         query.addCriteria(Criteria.where("title").is(title));
-        return mongoTemplate.find(query, Guide.class);
+        List<Guide> sample = mongoTemplate.find(query, Guide.class);
+        if(sample.size()==1){
+            Integer count = sample.get(0).getCount();
+            Update update = Update.update("count", count+1);
+            mongoTemplate.updateMulti(query, update, "Guideline");
+        }
+        return sample;
     }
 
     // 获取制定者列表

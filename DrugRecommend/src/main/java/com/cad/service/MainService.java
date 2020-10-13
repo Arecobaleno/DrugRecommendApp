@@ -1,11 +1,16 @@
 package com.cad.service;
 import com.baidu.hugegraph.structure.graph.Edge;
+import com.baidu.hugegraph.structure.graph.Path;
 import com.baidu.hugegraph.structure.graph.Vertex;
 import com.baidu.hugegraph.structure.gremlin.Result;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import com.cad.dao.MainDao;
 import com.cad.entity.*;
+import com.cad.pojo.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,6 +23,8 @@ import java.util.*;
 public class MainService {
     @Autowired
     private MainDao mainDao;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     // 全局疾病搜索
     public List<Object> overallDisease(String content){
@@ -40,19 +47,26 @@ public class MainService {
     // 根据所搜索的疾病返回的疾病树结构（自底向上）
     public DiseaseTreeResult getDiseaseTreeResult(String disease) {
         List<String> path = new LinkedList<>();
-        ResultSet resultSet = mainDao.getDiseaseNode(disease);
-        String label = resultSet.get(0).getVertex().label();
-        path.add(disease);
-        String node = disease;
-        while(!label.equals("疾病大类")){
-            resultSet = mainDao.getFatherNode(node);
-            label =  resultSet.get(0).getVertex().label();
-            String name = resultSet.get(0).getVertex().property("name").toString();
-            path.add(0, node);
-            node = name;
+        String diseaseClass;
+        ResultSet resultSet = mainDao.getDiseaseClass(disease);
+        if(resultSet.size()!=0){
+            Object object = resultSet.get(0).getObject();
+            List<Object> elements = ((Path) object).objects();
+            elements.forEach(element -> {
+                path.add(0,((Vertex)element).property("name").toString());
+            });
+            diseaseClass=path.get(0);
         }
-        path.add(0,node);
-        DiseaseTree diseaseTree = buildDiseaseTree(node);
+        else {
+            diseaseClass = disease;
+            path.add(disease);
+        }
+//        DiseaseTree diseaseTree = buildDiseaseTree(diseaseClass);
+//        mongoTemplate.insert(diseaseTree);
+        org.springframework.data.mongodb.core.query.Query query = new Query();
+        query.addCriteria(Criteria.where("name").is(diseaseClass));
+        List<DiseaseTree> sample = mongoTemplate.find(query, DiseaseTree.class);
+        DiseaseTree diseaseTree = sample.get(0);
         DiseaseTreeResult diseaseTreeResult = new DiseaseTreeResult();
         diseaseTreeResult.setDiseaseTree(diseaseTree);
         diseaseTreeResult.setPath(path);
