@@ -5,7 +5,6 @@ import com.baidu.hugegraph.driver.HugeClient;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import org.springframework.stereotype.Repository;
 
-
 /**
  * 首页模块Dao
  */
@@ -36,7 +35,7 @@ public class MainDao {
     public ResultSet getDiseaseClass(String name) {
         return gremlin.gremlin("g.V().hasValue('"+ name +"')" +
                 ".repeat(both().simplePath()).until(hasLabel('疾病大类')" +
-                ".or().loops().is(gte(10))).hasLabel('疾病大类')" +
+                ".or().loops().is(gte(6))).hasLabel('疾病大类')" +
                 ".path()").execute();
     }
 

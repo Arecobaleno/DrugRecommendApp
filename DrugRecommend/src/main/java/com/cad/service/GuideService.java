@@ -2,9 +2,7 @@ package com.cad.service;
 
 import com.cad.pojo.Guide;
 import com.cad.pojo.Maker;
-import com.mongodb.WriteResult;
 import com.mongodb.client.gridfs.model.GridFSFile;
-import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -107,5 +105,4 @@ public class GuideService {
         }
         return res;
     }
-
 }

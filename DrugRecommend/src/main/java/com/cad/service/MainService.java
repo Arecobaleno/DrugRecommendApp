@@ -6,7 +6,6 @@ import com.baidu.hugegraph.structure.gremlin.Result;
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
 import com.cad.dao.MainDao;
 import com.cad.entity.*;
-import com.cad.pojo.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -63,7 +62,7 @@ public class MainService {
         }
 //        DiseaseTree diseaseTree = buildDiseaseTree(diseaseClass);
 //        mongoTemplate.insert(diseaseTree);
-        org.springframework.data.mongodb.core.query.Query query = new Query();
+        Query query = new Query();
         query.addCriteria(Criteria.where("name").is(diseaseClass));
         List<DiseaseTree> sample = mongoTemplate.find(query, DiseaseTree.class);
         DiseaseTree diseaseTree = sample.get(0);
