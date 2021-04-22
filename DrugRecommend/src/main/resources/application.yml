@@ -1,5 +1,9 @@
 server:
-  port: 10088
+  port: 10204
+  ssl:
+    key-store: classpath:mycert.jks
+    key-store-password: 123456
+    key-store-type: JKS
 spring:
   data:
     mongodb:

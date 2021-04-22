@@ -43,6 +43,34 @@ public class MainService {
         return result;
     }
 
+    // 返回疾病上级目录    需要讨论
+//    public DiseaseTree getDiseaseBack(String disease) {
+//    }
+
+    // 返回疾病下级目录
+    public TreeNodeList getDiseaseNext(String disease) {
+        TreeNodeList treeNodeList = new TreeNodeList();
+        ResultSet resultSet = mainDao.getChildNode(disease);
+        Iterator<Result> results = resultSet.iterator();
+        List<String> subTitle = new ArrayList<>();
+        List<String> leafTitle = new ArrayList<>();
+        results.forEachRemaining(result -> {
+            Object object = result.getObject();
+            String label = ((Vertex)object).label();
+            String name = ((Vertex)object).property("name").toString();
+            if(label.equals("疾病三级分类")){
+                subTitle.add(name);
+            }
+            else if(label.equals("疾病")){
+                leafTitle.add(name);
+            }
+        });
+        treeNodeList.setNodeName(disease);
+        treeNodeList.setSubNode(subTitle);
+        treeNodeList.setLeafNode(leafTitle);
+        return treeNodeList;
+    }
+
     // 根据所搜索的疾病返回的疾病树结构（自底向上）
     public DiseaseTreeResult getDiseaseTreeResult(String disease) {
         List<String> path = new LinkedList<>();
@@ -65,6 +93,11 @@ public class MainService {
         Query query = new Query();
         query.addCriteria(Criteria.where("name").is(diseaseClass));
         List<DiseaseTree> sample = mongoTemplate.find(query, DiseaseTree.class);
+        if(sample.size()==0){
+            DiseaseTree diseaseTree = buildDiseaseTree(diseaseClass);
+            mongoTemplate.insert(diseaseTree);
+            sample = mongoTemplate.find(query, DiseaseTree.class);
+        }
         DiseaseTree diseaseTree = sample.get(0);
         DiseaseTreeResult diseaseTreeResult = new DiseaseTreeResult();
         diseaseTreeResult.setDiseaseTree(diseaseTree);
@@ -84,7 +117,7 @@ public class MainService {
             Object object = result.getObject();
             String label = ((Vertex)object).label();
             String name = ((Vertex)object).property("name").toString();
-            if(label.equals("疾病类型")){
+            if(label.equals("疾病三级分类")){
                 subTitle.add(buildDiseaseTree(name));
             }
             else if(label.equals("疾病")){

@@ -1,12 +1,15 @@
 package com.cad.service;
 
+import com.cad.pojo.Guide;
 import com.cad.pojo.Reference;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.sql.Ref;
 import java.util.List;
 
 @Service
@@ -17,25 +20,48 @@ public class ReferenceService {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public List<Reference> getReferenceList(String category, String word){
+    public List<Reference> referenceSearchList(String word){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("title").regex(word));
+        return mongoTemplate.find(query, Reference.class);
+    }
+
+    public List<Reference> referenceNewList(){
+        Query query = new Query();
+        query.limit(10);
+        return mongoTemplate.find(query, Reference.class);
+    }
+
+    public List<Reference> referenceYearList(String category, String word){
         List<Reference> res;
-        if (category.equals("new")){
+        if(word.equals("all")){
             Query query = new Query();
-            query.limit(6);
+            if(category.equals("hot")){
+                query.with(Sort.by(
+                        Sort.Order.desc("count")
+                ));
+            } else{
+                query.with(Sort.by(
+                        Sort.Order.desc("date")
+                ));
+            }
             res = mongoTemplate.find(query, Reference.class);
-        }
-        else if (category.equals("search")){
-            Query query = new Query();
-            query.addCriteria(Criteria.where("title").regex(word));
-            res = mongoTemplate.find(query, Reference.class);
-        }
-        else if (category.equals("year")){
-            Query query = new Query();
-            query.addCriteria(Criteria.where("year").regex(word));
-            res = mongoTemplate.find(query, Reference.class);
-        }
-        else{
-            res = null;
+        } else {
+            if(category.equals("hot")){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("year").regex(word));
+                query.with(Sort.by(
+                        Sort.Order.desc("count")
+                ));
+                res = mongoTemplate.find(query, Reference.class);
+            } else{
+                Query query = new Query();
+                query.addCriteria(Criteria.where("year").regex(word));
+                query.with(Sort.by(
+                        Sort.Order.desc("date")
+                ));
+                res = mongoTemplate.find(query, Reference.class);
+            }
         }
         return res;
     }

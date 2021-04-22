@@ -1,10 +1,7 @@
 package com.cad.controller;
 
 import com.baidu.hugegraph.structure.gremlin.ResultSet;
-import com.cad.entity.DiseaseResult;
-import com.cad.entity.DiseaseTreeResult;
-import com.cad.entity.MultiInteraction;
-import com.cad.entity.Query;
+import com.cad.entity.*;
 import com.cad.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -67,6 +64,20 @@ public class MainController {
     public DiseaseTreeResult getDiseaseTree(@RequestBody Query query) {
         String content = query.getContent();
         return mainService.getDiseaseTreeResult(content);
+    }
+
+    // 疾病树 返回疾病上级目录
+//    @PostMapping(value = "/disease_back")
+//    public TreeNodeList getDiseaseBack(@RequestBody Query query) {
+//        String content = query.getContent();
+//        return mainService.
+//    }
+
+    // 疾病树 返回疾病下级目录
+    @PostMapping(value = "/disease_next")
+    public TreeNodeList getDiseaseNext(@RequestBody Query query) {
+        String content = query.getContent();
+        return mainService.getDiseaseNext(content);
     }
 
     //药品查询

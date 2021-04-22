@@ -1,9 +1,11 @@
 package com.cad.service;
 
+import com.cad.entity.MakerResponse;
 import com.cad.pojo.Guide;
 import com.cad.pojo.Maker;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -74,35 +77,83 @@ public class GuideService {
         return mongoTemplate.findAll(Maker.class);
     }
 
-    // 获取指南列表
-    public List<Guide> guideList(String category, String word){
+    // 制定者搜索
+    public List<MakerResponse> getMakerSearch(String content){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").regex(content));
+        List<Maker> makers = mongoTemplate.find(query, Maker.class);
+        List<MakerResponse> makerResponses = new ArrayList<>();
+        for(Maker maker:makers){
+            MakerResponse makerResponse = new MakerResponse();
+            makerResponse.setName(maker.getName());
+            makerResponses.add(makerResponse);
+        }
+        return makerResponses;
+    }
+
+    // 返回 搜索 指南列表
+    public List<Guide> guideSearchList(String word){
+        Criteria criteria = new Criteria();
+        criteria.orOperator(Criteria.where("title").regex(word),
+                Criteria.where("time").regex(word),
+                Criteria.where("maker").regex(word));
+        Query query = new Query(criteria);
+        query.with(Sort.by(
+                Sort.Order.desc("count")
+        ));
+        return mongoTemplate.find(query, Guide.class);
+    }
+
+    // 返回 最新 指南列表
+    public List<Guide> guideNewList() {
+        Query query = new Query();
+        query.with(Sort.by(
+                Sort.Order.desc("time")
+        ));
+        query.limit(10);
+        return mongoTemplate.find(query, Guide.class);
+    }
+
+    // 返回 按制定者查询 指南列表
+    public List<Guide> guideMakerList(String word) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("maker").regex(word));
+        return mongoTemplate.find(query, Guide.class);
+    }
+
+    // 返回 按年份查询 指南列表
+    public List<Guide> guideYearList(String category, String word) {
         List<Guide> res;
-        if (category.equals("search")){
-            Criteria criteria = new Criteria();
-            criteria.orOperator(Criteria.where("title").regex(word),
-                    Criteria.where("time").regex(word),
-                    Criteria.where("maker").regex(word));
-            Query query = new Query(criteria);
-            res = mongoTemplate.find(query, Guide.class);
-        }
-        else if(category.equals("new")){
+        if(word.equals("all")){
             Query query = new Query();
-            query.limit(6);
+            if(category.equals("hot")){
+                query.with(Sort.by(
+                        Sort.Order.desc("count")
+                ));
+            } else{
+                query.with(Sort.by(
+                        Sort.Order.desc("time")
+                ));
+            }
             res = mongoTemplate.find(query, Guide.class);
-        }
-        else if(category.equals("year")){
-            Query query = new Query();
-            query.addCriteria(Criteria.where("time").regex(word));
-            res = mongoTemplate.find(query, Guide.class);
-        }
-        else if(category.equals("maker")){
-            Query query = new Query();
-            query.addCriteria(Criteria.where("maker").regex(word));
-            res = mongoTemplate.find(query, Guide.class);
-        }
-        else {
-            res = null;
+        } else {
+            if(category.equals("hot")){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("time").regex(word));
+                query.with(Sort.by(
+                        Sort.Order.desc("count")
+                ));
+                res = mongoTemplate.find(query, Guide.class);
+            } else{
+                Query query = new Query();
+                query.addCriteria(Criteria.where("time").regex(word));
+                query.with(Sort.by(
+                        Sort.Order.desc("time")
+                ));
+                res = mongoTemplate.find(query, Guide.class);
+            }
         }
         return res;
     }
+
 }

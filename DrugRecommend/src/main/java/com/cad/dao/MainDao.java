@@ -31,20 +31,24 @@ public class MainDao {
         return gremlin.gremlin("g.V().hasValue('" + name + "').filter(label().is(Text.contains('疾病')))").execute();
     }
 
-    // 根据疾病向上搜索其所属疾病大类
+    // 根据疾病向上搜索其所属疾病大类 ***********
     public ResultSet getDiseaseClass(String name) {
         return gremlin.gremlin("g.V().hasValue('"+ name +"')" +
-                ".repeat(both().simplePath()).until(hasLabel('疾病大类')" +
-                ".or().loops().is(gte(6))).hasLabel('疾病大类')" +
-                ".path()").execute();
+                ".repeat(both().filter(label().is(Text.contains('疾病'))).simplePath())" +
+                ".until(hasLabel('疾病二级分类').or().loops().is(gte(6))).hasLabel('疾病二级分类').path()").execute();
     }
 
-    // 根据名称寻找疾病树的父节点
+    // 根据名称寻找疾病树的父节点 ********************
     public ResultSet getFatherNode(String name) {
         return gremlin.gremlin("g.V().hasValue('" + name + "').in().filter(label().is(Text.contains('疾病')))").execute();
     }
 
-    // 根据名称寻找疾病树的子节点
+    // 根据名称寻找疾病树的爷爷节点 ********************
+    public ResultSet getGrandfatherNode(String name) {
+        return gremlin.gremlin("g.V().hasValue('" + name + "').in().in().filter(label().is(Text.contains('疾病')))").execute();
+    }
+
+    // 根据名称寻找疾病树的子节点 ************
     public ResultSet getChildNode(String name) {
         return gremlin.gremlin("g.V().hasValue('" + name + "').out().filter(label().is(Text.contains('疾病')))").execute();
     }
@@ -78,7 +82,7 @@ public class MainDao {
                 "filter(label().is(Text.contains('药品'))))").execute();
     }
 
-    // 搜索疾病，返回疾病list
+    // 搜索疾病，返回疾病list *************************************
     public ResultSet searchDiseaseList(String content){
         return gremlin.gremlin("g.V().hasLabel('疾病','疾病类型').filter(values('name')" +
                 ".is(Text.contains('"+content+"'))).properties('name')").execute();
