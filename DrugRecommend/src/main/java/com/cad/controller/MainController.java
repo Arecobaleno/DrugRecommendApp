@@ -61,23 +61,30 @@ public class MainController {
 
     // 根据疾病获取疾病树形信息
     @PostMapping(value = "/disease_tree")
-    public DiseaseTreeResult getDiseaseTree(@RequestBody Query query) {
+    public DiseaseTreeResult DiseaseTree(@RequestBody Query query) {
         String content = query.getContent();
         return mainService.getDiseaseTreeResult(content);
     }
 
+    // 疾病一级目录
+    @PostMapping(value = "/disease_catalog")
+    public TreeLayer DiseaseCatalog() {
+        return mainService.getDiseaseCatalog();
+    }
+
     // 疾病树 返回疾病上级目录
-//    @PostMapping(value = "/disease_back")
-//    public TreeNodeList getDiseaseBack(@RequestBody Query query) {
-//        String content = query.getContent();
-//        return mainService.
-//    }
+    @PostMapping(value = "/disease_back")
+    public TreeLayer DiseaseBack(@RequestBody Query query) {
+        String content = query.getContent();
+        return mainService.getDiseaseBack(content);
+    }
 
     // 疾病树 返回疾病下级目录
     @PostMapping(value = "/disease_next")
-    public TreeNodeList getDiseaseNext(@RequestBody Query query) {
+    public TreeLayer DiseaseNext(@RequestBody Query query) {
         String content = query.getContent();
-        return mainService.getDiseaseNext(content);
+        String category = query.getCategory();
+        return mainService.getDiseaseNext(content, category);
     }
 
     //药品查询

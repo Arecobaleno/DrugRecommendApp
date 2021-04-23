@@ -43,32 +43,59 @@ public class MainService {
         return result;
     }
 
-    // 返回疾病上级目录    需要讨论
-//    public DiseaseTree getDiseaseBack(String disease) {
-//    }
-
-    // 返回疾病下级目录
-    public TreeNodeList getDiseaseNext(String disease) {
-        TreeNodeList treeNodeList = new TreeNodeList();
-        ResultSet resultSet = mainDao.getChildNode(disease);
+    // 返回疾病一级目录
+    public TreeLayer getDiseaseCatalog(){
+        ResultSet resultSet = mainDao.getFirstClass();
         Iterator<Result> results = resultSet.iterator();
-        List<String> subTitle = new ArrayList<>();
-        List<String> leafTitle = new ArrayList<>();
+        TreeLayer treeLayer = new TreeLayer();
+        List<TreeNode> childes = new ArrayList<>();
         results.forEachRemaining(result -> {
+            TreeNode node = new TreeNode();
             Object object = result.getObject();
             String label = ((Vertex)object).label();
             String name = ((Vertex)object).property("name").toString();
-            if(label.equals("疾病三级分类")){
-                subTitle.add(name);
-            }
-            else if(label.equals("疾病")){
-                leafTitle.add(name);
-            }
+            node.setNodeName(name);
+            node.setNodeLabel(label);
+            childes.add(node);
         });
-        treeNodeList.setNodeName(disease);
-        treeNodeList.setSubNode(subTitle);
-        treeNodeList.setLeafNode(leafTitle);
-        return treeNodeList;
+        treeLayer.setChildList(childes);
+        return treeLayer;
+    }
+
+    // 返回疾病上级目录
+    public TreeLayer getDiseaseBack(String disease) {
+        TreeLayer treeLayer;
+        ResultSet resultSet = mainDao.getFatherNode(disease);
+        Iterator<Result> results = resultSet.iterator();
+        Result result = results.next();
+        Object object = result.getObject();
+        String label = ((Vertex)object).label();
+        String name = ((Vertex)object).property("name").toString();
+        treeLayer = getDiseaseNext(name, label);
+        return treeLayer;
+    }
+
+    // 返回疾病下级目录
+    public TreeLayer getDiseaseNext(String disease, String category) {
+        TreeLayer treeLayer = new TreeLayer();
+        ResultSet resultSet = mainDao.getChildNode(disease);
+        Iterator<Result> results = resultSet.iterator();
+        TreeNode tempNode = new TreeNode();
+        tempNode.setNodeName(disease);
+        tempNode.setNodeLabel(category);
+        List<TreeNode> childes = new ArrayList<>();
+        results.forEachRemaining(result -> {
+            TreeNode node = new TreeNode();
+            Object object = result.getObject();
+            String label = ((Vertex)object).label();
+            String name = ((Vertex)object).property("name").toString();
+            node.setNodeName(name);
+            node.setNodeLabel(label);
+            childes.add(node);
+        });
+        treeLayer.setNode(tempNode);
+        treeLayer.setChildList(childes);
+        return treeLayer;
     }
 
     // 根据所搜索的疾病返回的疾病树结构（自底向上）
